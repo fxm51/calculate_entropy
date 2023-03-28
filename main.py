@@ -25,39 +25,24 @@ def calculate_entropy_single_word(text):
     return -entropy
 
 
-def remove_chars(base_string, remove_string):
-    # 将要移除的字符作为一个集合
-    remove_set = set(remove_string)
-
-    # 使用 filter 函数过滤掉 base_string 中所有在 remove_set 中的字符
-    result = filter(lambda x: x not in remove_set, base_string)
-
-    # 将结果转换为字符串并返回
-    return ''.join(result)
-
-
 if __name__ == '__main__':
     # 从文件中读取文本
     # 使用 glob.glob() 方法获取符合条件的所有文件路径
     file_paths = glob.glob(os.path.join(folder_path, file_extension))
-    file_contents = []
+    file_contents = {}
     # 循环遍历所有文件路径，并读取文件内容
     for path in file_paths:
         with open(path, "r", encoding='ansi') as file:
-            content = file.read()
-            file_contents.append(content)
-
+            file_contents = file.read()
     # 数据处理，清除无用数据
     with open('cn_stopwords.txt', 'r', encoding='utf-8') as f:
         lines = f.readlines()
         stop_words = [line.strip() for line in lines]
     remove_set = set(stop_words)
-    remove_set.add(' ')
-    print(remove_set)
     result = filter(lambda x: x not in remove_set, file_contents)
     new_contents = ''.join(result)
-    print(new_contents)
-
+    new_contents = new_contents.replace("\n", '')
+    new_contents = new_contents.replace("\u3000", '')
     # 计算中文信息熵
     entropy = calculate_entropy_single_word(new_contents)
     print(f"该文本的中文信息熵为: {entropy}")
